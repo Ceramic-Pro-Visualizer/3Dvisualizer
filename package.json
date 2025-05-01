@@ -1,0 +1,11 @@
+{
+  "name": "car_visualizer",
+  "version": "1.0.0",
+  "description": "3D_car_visualizer",
+  "main": "index.js",
+  "scripts": {
+    "build:3D": "mkdir -p visualizer/dist && cp visualizer/src/visualizer_sdk_mv.js visualizer/dist/visualizer_sdk_mv.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

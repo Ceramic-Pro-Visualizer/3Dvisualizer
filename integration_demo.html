@@ -1,0 +1,109 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Visualizer Integration Demo</title>
+    <meta name="description" content="A simple file that demonstrates how to integrate the JS visualizer sdk.">
+    <meta name="author" content="nle">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #fff;
+        }
+        main {
+            flex-grow: 1;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        #visualizerContainer {
+            padding: 16px;
+        }
+
+        .notes {
+            padding: 16px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="visualizerContainer">
+        <p>The visualizer container will be dynamically populated at runtime.</p>
+    </div>
+    <button onclick="changeColorMode()" style="height: 30px;">Toggle Color Mode</button>
+    <!-- Import the visualizer js sdk -->
+    <script src="visualizer/src/visualizer_sdk_mv.js?build=12" type="text/javascript"></script>
+
+    <!-- Application JS example -->
+    <script type="text/javascript">
+        var colorMode = 0;
+        //Init the sdk (will be global variable)
+        //target - the ID of the container element you want to load the visualizer into
+        //loadCSS - the visualizer loads it's own style sheet, which won't cause collisions with host page, but if you need to debug, you can disable here
+        //log - the sdk will log helpful messages about the visualizer lifecycle, can be helpful for debugging if needed
+        //height - default = 600
+        //width - default = undefined (100%), setting value will set max-width to value
+        //theme - defeult is primary = red, secondary = green, tertiary = blue
+        //helpers - show things light light, camera, shadow, fps helpers
+        visualizer.init({
+            installerId:"mvp",
+            targetId: "visualizerContainer", 
+            loadCSS: true, 
+            log: true, 
+            height: 600,
+            width: undefined, 
+            theme: {
+                brandColor: "rgb(233, 29, 143)",
+                loaderColor: "rgb(233, 29, 143)"
+            },
+            helpers: false,
+            background: false
+        });
+        
+
+        //Listen for callbacks
+        visualizer.on("onCarModelChanged", (model) => {
+            console.log("Host Page: Model Changed", model);
+        });
+
+        visualizer.on("onPaintApplied", (color) => {
+            console.log("Host Page: Color Applied:", color);
+        });
+
+        visualizer.on("onPartClicked", (part) => {
+            console.log("Host Page: Part Clicked:", part);
+        });
+
+        visualizer.on("onLightClicked", (light) => {
+            console.log("Host Page: Light Clicked:", light);
+        });
+
+        visualizer.on("onGetQuoteClicked", (meta) => {
+            console.log("Host Page: Get Quote:", meta);
+        });
+
+        function changeColorMode()
+        {
+            if(colorMode == 0)
+            {
+                colorMode = 1;
+                visualizer.toggleColorMode(colorMode);//0 = light, 1 = dark
+            } else {
+                colorMode = 0;
+                visualizer.toggleColorMode(colorMode);//0 = light, 1 = dark
+            }
+        }
+
+    </script>
+</body>
+
+</html>
