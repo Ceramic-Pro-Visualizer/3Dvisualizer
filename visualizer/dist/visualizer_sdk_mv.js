@@ -72,24 +72,29 @@
         carModels: [//replace this with api in future, or even json file
             { id: 'C0', name: 'Porsche 911 S/T', path: './visualizer/cdn/st.glb', brand: 'Porsche', header: '2024' },
             // { id: 'C1', name: 'Porsche 911 GT3 RS', path: './visualizer/cdn/gt3rs.glb', brand: 'Porsche', header: '2024' },
-            { id: 'C2', name: 'Dodge Ram 1500', path: './visualizer/cdn/2021_ram_1500.glb', brand: 'Dodge', header: '2021'},
-            { id: 'C3', name: 'Chevrolet Corvette', path: './visualizer/cdn/corvette.glb', brand: 'Chevrolet', header: '2023'},
-            // { id: 'C4', name: 'Mustang', path: './visualizer/cdn/mustang.glb', brand: 'Ford', header: '2023'},
-            { id: 'C5', name: 'Chevrolet Silverado Trail Boss', path: './visualizer/cdn/trailboss.glb', brand: 'Chevrolet', header: '2019'},
-            { id: 'C6', name: 'Ford F150 Raptor', path: './visualizer/cdn/fordf150.glb', brand: 'Ford', header: 'Unknown'},
-
+            { id: 'C2', name: 'Dodge Ram 1500', path: './visualizer/cdn/2021_ram_1500.glb?v=4', brand: 'Dodge', header: '2021'},
+            { id: 'C3', name: 'Chevrolet Corvette', path: './visualizer/cdn/corvette.glb?v=6', brand: 'Chevrolet', header: '2023'},
+            { id: 'C4', name: 'Ford Mustang', path: './visualizer/cdn/mustang.glb', brand: 'Ford', header: '2023'},
+            { id: 'C5', name: 'Chevrolet Silverado Trail Boss', path: './visualizer/cdn/trailboss.glb?v=4', brand: 'Chevrolet', header: '2019'},
+            { id: 'C6', name: 'Ford F150 Raptor', path: './visualizer/cdn/fordf150.glb?v=4', brand: 'Ford', header: '2022'},
+            { id: 'C7', name: 'Porsche Cayenne', path: './visualizer/cdn/cayenne.glb?v=4', brand: 'Porsche', header: '2023'},
+            { id: 'C8', name: 'Tesla Modal 3', path: './visualizer/cdn/tesla.glb??v=4', brand: 'Tesla', header: '2023'},
+            { id: 'C9', name: 'Toyota 4 Runner', path: './visualizer/cdn/4runner.glb?v=4', brand: 'Toyota', header: '2024'},
+            { id: 'C10', name: 'Ford Bronco', path: './visualizer/cdn/bronco.glb?v=4', brand: 'Ford', header: '2022'},
         ],
         lightModels: [//replace this with api in future, or even json file
-            { id: 'L0', name: 'Day', path: './visualizer/cdn/scene.hdr', imgPath: './visualizer/cdn/day_thumbnail.jpg', exposure: 1 },
-            { id: 'L1', name: 'Night', path: './visualizer/cdn/satara_night_no_lamps_1k.hdr', imgPath: './visualizer/cdn/night_thumbnail.jpg', exposure: 0.2 }
+            { id: 'L0', name: 'Studio', path: './visualizer/cdn/skylit_garage_1k.hdr', skybox: './visualizer/cdn/skylit_garage_1k_floor_l.hdr', imgPath: './visualizer/cdn/garage_thumbnail.jpg' },
+            { id: 'L1', name: 'Day', path: './visualizer/cdn/victoria_sunset_2k.hdr', skybox: './visualizer/cdn/victoria_sunset_2k.hdr', imgPath: './visualizer/cdn/day_thumbnail.jpg' },
+            { id: 'L2', name: 'Night', path: './visualizer/cdn/solitude_night_1k.hdr', skybox: './visualizer/cdn/solitude_night_1k.hdr', imgPath: './visualizer/cdn/night_thumbnail.jpg' },
         ],
         selectedCarModelId: 'C0',
         selectedPaintId: 'BahiaRed',
         selectedLightId: 'L0',
         selectedColor: 0,
         usingCustomColor: false,
+        colorPickerDebounceTimer: null,
         //--------------------------- Init / Main Entry Point ---------------------------//
-        async init({ installerId = 'mvp', targetId, loadCSS = true, log = false, height = 600, width = undefined, theme = { brandColor: 'green', loaderColor: 'green' }, helpers = false, background = true }) {
+        async init({ installerId = 'mvp', targetId, darkMode = false, loadCSS = true, log = false, height = 600, width = undefined, theme = { brandColor: 'green', loaderColor: 'green' }, helpers = false }) {
                         
             this.logEnabled = log;
             this.showHelpers = helpers;
@@ -104,12 +109,12 @@
 
             if (loadCSS) {
                 this.loadFonts();
-                this.addGlobalStyles(height, width, theme, background);
+                this.addGlobalStyles(height, width, theme);
             }
 
             await this.loadModelViewer();
 
-            this.createVisualizer(theme, background);
+            this.createVisualizer(theme, darkMode);
 
             // Add resize listener to update renderer and camera
             window.addEventListener('resize', this.onWindowResize.bind(this));
@@ -140,9 +145,21 @@
             fontLink.href = 'https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap';
             fontLink.rel = 'stylesheet';
             document.head.appendChild(fontLink);
+
+            const imagePreload = document.createElement('link');
+            imagePreload.href = './visualizer/cdn/skylit_garage_1k_floor_l.hdr';
+            imagePreload.rel = 'preload';
+            imagePreload.as = 'image';
+            document.head.appendChild(imagePreload);
+
+            const imagePreload2 = document.createElement('link');
+            imagePreload2.href = './visualizer/cdn/solitude_night_1k.hdr';
+            imagePreload2.rel = 'preload';
+            imagePreload2.as = 'image';
+            document.head.appendChild(imagePreload2);
         },
         //--------------------------- Create Visualizer ---------------------------//
-        async createVisualizer(theme, background) {
+        async createVisualizer(theme, darkMode) {
             this.cLog('Creating Visualizer');
 
             // Clear host container and create a wrapper
@@ -150,7 +167,7 @@
 
             //Create new wrapper
             const wrapper = document.createElement('div');
-            wrapper.className = 'visualizer_wrapper';
+            wrapper.className = (darkMode) ? 'visualizer_wrapper dark' : 'visualizer_wrapper';
             this.container.appendChild(wrapper);
         
             //Create new wrapper
@@ -200,7 +217,6 @@
 
                         material.pbrMetallicRoughness.setMetallicFactor(metallic);
                         material.pbrMetallicRoughness.setRoughnessFactor(roughness);
-
                         break;
                     }
                 }
@@ -220,11 +236,11 @@
             this.animator = new ExposureAnimator(modelViewer);
 
   
-            await this.createUI(wrapper, modelViewer, background);
+            await this.createUI(wrapper, modelViewer);
             this.cLog('Ready!');
         },
         //--------------------------- UI Overlay/Chrome ---------------------------//
-        async createUI(wrapper, threeJSContainer, background) {
+        async createUI(wrapper, threeJSContainer) {
             this.cLog('Adding UI Overlay');
             const THREE = this.THREE;
 
@@ -253,7 +269,7 @@
 
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('d', 'M1 1l4 4 4-4');
-            path.setAttribute('stroke', (background ? '#ffffff' : '#000000'));
+            path.setAttribute('stroke', '#000000');
             path.setAttribute('fill', 'none');
             path.setAttribute('stroke-width', '2.5');
 
@@ -338,15 +354,6 @@
             paintColorsHeader.className = 'title1 primaryText ml8 bold';
             paintColorsHeader.innerHTML = selectedCarModel.name;
             modelHeader.appendChild(paintColorsHeader);
-
-            const getQuoteButton = document.createElement('BUTTON');
-            getQuoteButton.className = 'pill';
-            getQuoteButton.innerHTML = 'Get Quote';
-            getQuoteButton.addEventListener('click', () => {
-                //Callback
-                this.triggerCallback('onGetQuoteClicked', JSON.stringify(this.userEvents));
-            });
-            bottomBarTop.appendChild(getQuoteButton);
 
             const bottomBarBottom = document.createElement('DIV');
             bottomBarBottom.className = 'bottomBarBottom';
@@ -437,13 +444,6 @@
                 
                                     if (material.name === 'Paint') {
                                         material.pbrMetallicRoughness.setBaseColorFactor(value);
-                
-                                        // const metallic = color.metallic ? 1.0 : 0.0;
-                                        // const roughness = color.metallic ? 0.5 : 0.5;
-                
-                                        // material.pbrMetallicRoughness.setMetallicFactor(metallic);
-                                        // material.pbrMetallicRoughness.setRoughnessFactor(roughness);
-                
                                         break;
                                     }
                                 }
@@ -458,7 +458,10 @@
                                 colorPickerContainer.classList.add('selected');
                                 
                                 //Callback
-                                this.triggerCallback('onPaintApplied', value);
+                                clearTimeout(this.colorPickerDebounceTimer); 
+                                this.colorPickerDebounceTimer = setTimeout(() => {
+                                    this.triggerCallback('onPaintApplied', value);
+                                }, 1000);
                                 //Meta
                                 this.userEvents.push(`Paint Applied:${value}`)
                             }
@@ -508,8 +511,8 @@
             lightModule.appendChild(header);
 
             header = document.createElement('p');
-            header.className = 'title6 primaryText mb8 pl24 pr24';
-            header.innerHTML = 'Lighting Mode';
+            header.className = 'title6 primaryText mb4 pl24 pr24';
+            header.innerHTML = 'Environment';
             lightModule.appendChild(header);
 
             scrollContainer = document.createElement('DIV');
@@ -517,7 +520,7 @@
             lightModule.appendChild(scrollContainer);
 
             swatchContainer = document.createElement('div')
-            swatchContainer.className = 'swatchContainer pl24 pr24';
+            swatchContainer.className = 'swatchContainer pl24 pr24 mb8';
             scrollContainer.appendChild(swatchContainer);
 
             this.lightModels.forEach((light) => {
@@ -526,10 +529,23 @@
                 swatch.className = (light.id == this.selectedLightId) ? 'swatch selected' : 'swatch';
                 swatch.src = light.imgPath;
                 swatch.alt = light.name;
+                swatch.title = light.name;
                 swatch.dataset.lightId = light.id;
                 swatch.addEventListener('click', () => {
                     //Apply Light Change
-                    this.animator.setExposure(light.exposure, 1500);
+                    const modelViewer = document.querySelector('model-viewer');
+                    modelViewer.environmentImage = light.path;
+                    modelViewer.skyboxImage = light.skybox;
+
+                    if(light.id == 'L2')
+                    {
+                        this.animator.setExposure(0.5, 1000);
+
+                    } 
+                    else 
+                    {
+                        this.animator.setExposure(1.0, 1000);
+                    }
                     this.selectedLightId = light.id;
                     //Update UI
                     const swatches = document.querySelectorAll('[data-light-id]');
@@ -548,7 +564,6 @@
                 });
                 swatchContainer.appendChild(swatch);
             });
-
         },
         createSwatches(container, type) {
 
@@ -561,6 +576,7 @@
                 const swatch = document.createElement('div');
                 swatch.className = (color.ref == this.selectedPaintId) ? 'swatch selected' : 'swatch';
                 swatch.style.background = showingMetallic ? `linear-gradient(135deg, rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.3) 30%, rgba(0, 0, 0, 0.15) 60%, rgba(255, 255, 255, 0.2)), ${color.hex}` : color.hex;
+                swatch.alt = color.name;
                 swatch.dataset.paintId = color.ref;
                 swatch.title = color.name;
                 swatch.addEventListener('click', () => {
@@ -635,7 +651,6 @@
     font-size: 16px;
     letter-spacing: 0.5px;
     border: 1px solid #ccc;
-    transition: background 0.5s ease-in-out;
 }
 
 .visualizer_wrapper .primaryText
