@@ -78,7 +78,7 @@
             { id: 'C5', name: 'Chevrolet Silverado Trail Boss', path: './visualizer/cdn/trailboss.glb?v=4', brand: 'Chevrolet', header: '2019'},
             { id: 'C6', name: 'Ford F150 Raptor', path: './visualizer/cdn/fordf150.glb?v=4', brand: 'Ford', header: '2022'},
             { id: 'C7', name: 'Porsche Cayenne', path: './visualizer/cdn/cayenne.glb?v=5', brand: 'Porsche', header: '2023'},
-            { id: 'C8', name: 'Tesla Modal 3', path: './visualizer/cdn/tesla.glb??v=4', brand: 'Tesla', header: '2023'},
+            { id: 'C8', name: 'Tesla Modal 3', path: './visualizer/cdn/tesla.glb?v=5', brand: 'Tesla', header: '2023'},
             { id: 'C9', name: 'Toyota 4 Runner', path: './visualizer/cdn/4runner.glb?v=4', brand: 'Toyota', header: '2024'},
             { id: 'C10', name: 'Ford Bronco', path: './visualizer/cdn/bronco.glb?v=5', brand: 'Ford', header: '2022'},
         ],
