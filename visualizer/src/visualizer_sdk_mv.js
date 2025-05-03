@@ -73,19 +73,21 @@
             { id: 'C0', name: 'Porsche 911 S/T', path: './visualizer/cdn/st.glb', brand: 'Porsche', header: '2024' },
             // { id: 'C1', name: 'Porsche 911 GT3 RS', path: './visualizer/cdn/gt3rs.glb', brand: 'Porsche', header: '2024' },
             { id: 'C2', name: 'Dodge Ram 1500', path: './visualizer/cdn/2021_ram_1500.glb?v=4', brand: 'Dodge', header: '2021'},
-            { id: 'C3', name: 'Chevrolet Corvette', path: './visualizer/cdn/corvette.glb?v=6', brand: 'Chevrolet', header: '2023'},
+            { id: 'C3', name: 'Chevrolet Corvette', path: './visualizer/cdn/corvette.glb?v=10', brand: 'Chevrolet', header: '2023'},
             { id: 'C4', name: 'Ford Mustang', path: './visualizer/cdn/mustang.glb', brand: 'Ford', header: '2023'},
             { id: 'C5', name: 'Chevrolet Silverado Trail Boss', path: './visualizer/cdn/trailboss.glb?v=4', brand: 'Chevrolet', header: '2019'},
             { id: 'C6', name: 'Ford F150 Raptor', path: './visualizer/cdn/fordf150.glb?v=4', brand: 'Ford', header: '2022'},
-            { id: 'C7', name: 'Porsche Cayenne', path: './visualizer/cdn/cayenne.glb?v=4', brand: 'Porsche', header: '2023'},
+            { id: 'C7', name: 'Porsche Cayenne', path: './visualizer/cdn/cayenne.glb?v=5', brand: 'Porsche', header: '2023'},
             { id: 'C8', name: 'Tesla Modal 3', path: './visualizer/cdn/tesla.glb??v=4', brand: 'Tesla', header: '2023'},
             { id: 'C9', name: 'Toyota 4 Runner', path: './visualizer/cdn/4runner.glb?v=4', brand: 'Toyota', header: '2024'},
-            { id: 'C10', name: 'Ford Bronco', path: './visualizer/cdn/bronco.glb?v=4', brand: 'Ford', header: '2022'},
+            { id: 'C10', name: 'Ford Bronco', path: './visualizer/cdn/bronco.glb?v=5', brand: 'Ford', header: '2022'},
         ],
         lightModels: [//replace this with api in future, or even json file
             { id: 'L0', name: 'Studio', path: './visualizer/cdn/skylit_garage_1k.hdr', skybox: './visualizer/cdn/skylit_garage_1k_floor_l.hdr', imgPath: './visualizer/cdn/garage_thumbnail.jpg' },
             { id: 'L1', name: 'Day', path: './visualizer/cdn/victoria_sunset_2k.hdr', skybox: './visualizer/cdn/victoria_sunset_2k.hdr', imgPath: './visualizer/cdn/day_thumbnail.jpg' },
             { id: 'L2', name: 'Night', path: './visualizer/cdn/solitude_night_1k.hdr', skybox: './visualizer/cdn/solitude_night_1k.hdr', imgPath: './visualizer/cdn/night_thumbnail.jpg' },
+            { id: 'L3', name: 'Night', path: './visualizer/cdn/zwartkops_straight_sunset_1k.hdr', skybox: './visualizer/cdn/zwartkops_straight_sunset_1k.hdr', imgPath: './visualizer/cdn/test_thumbnail.jpg' },
+            { id: 'L4', name: 'Night', path: './visualizer/cdn/rooftop_night_1k.hdr', skybox: './visualizer/cdn/rooftop_night_1k.hdr', imgPath: './visualizer/cdn/test_thumbnail.jpg' },
         ],
         selectedCarModelId: 'C0',
         selectedPaintId: 'BahiaRed',
@@ -93,6 +95,7 @@
         selectedColor: 0,
         usingCustomColor: false,
         colorPickerDebounceTimer: null,
+        paintSwatchMode: 0,
         //--------------------------- Init / Main Entry Point ---------------------------//
         async init({ installerId = 'mvp', targetId, darkMode = false, loadCSS = true, log = false, height = 600, width = undefined, theme = { brandColor: 'green', loaderColor: 'green' }, helpers = false }) {
                         
@@ -363,8 +366,12 @@
             paintModule.className = 'module wide';
             bottomBarBottom.appendChild(paintModule);
 
+            // var bottomGradient = document.createElement('DIV');
+            // bottomGradient.className = 'bottomGradient';
+            // paintModule.appendChild(bottomGradient);
+
             const paintHeader = document.createElement('DIV');
-            paintHeader.className = 'paintHeader pl24 pr24 mb24';
+            paintHeader.className = 'paintHeader mb24';
             paintModule.appendChild(paintHeader);
 
                 header = document.createElement('p');
@@ -398,8 +405,7 @@
                                 this.selectedColor = c.id;
 
                                 //Update UI
-                                this.createSwatches('flatSwatches', 0);
-                                this.createSwatches('metallicSwatches', 1);
+                                this.createSwatches();
 
                                 const swatches = document.querySelectorAll('[data-color-id]');
                                 swatches.forEach(swatch => {
@@ -418,115 +424,160 @@
                         });
 
 
-                const colorPickerContainer = document.createElement('DIV');
-                colorPickerContainer.className = 'colorPickerContainer';
-                paintHeader.appendChild(colorPickerContainer);
+    
 
-                        // const colorPickerLabel = document.createElement('LABEL');
-                        // colorPickerLabel.setAttribute('for', 'favcolor');
-                        // colorPickerLabel.innerHTML = 'Hey';
-                        // colorPickerContainer.appendChild(colorPickerLabel);
+            const segmentedControlWrapper = document.createElement('DIV');
+            segmentedControlWrapper.className = 'segmentedControlWrapper mb16';
+            paintModule.appendChild(segmentedControlWrapper);
 
-                        const colorPickerInput = document.createElement('INPUT');
-                        colorPickerInput.setAttribute('type', 'color');
-                        colorPickerInput.id = 'favcolor';
-                        colorPickerInput.name = 'favcolor';
-                        colorPickerInput.value = '#ff0000';
-                        colorPickerInput.addEventListener('input', () => {
-                            const value = document.getElementById('favcolor').value;
-                            if (this.currentModel) {
-                                this.cLog('Paint Applied', value);
-                                //Config & Apply Paint
-                                this.usingCustomColor = true;
-                  
-                                for (var i = 0; i < this.currentModel.materials.length; i++) {
-                                    const material = this.currentModel.materials[i];
-                
-                                    if (material.name === 'Paint') {
-                                        material.pbrMetallicRoughness.setBaseColorFactor(value);
-                                        break;
-                                    }
-                                }
-                                
-                                //Update UI  
-                                const swatches = document.querySelectorAll('[data-paint-id]');
-                                swatches.forEach(swatch => {
-                                    swatch.classList.remove('selected');
-                                });     
-                                
-                                const colorPickerContainer = document.querySelector('.colorPickerContainer');
-                                colorPickerContainer.classList.add('selected');
-                                
-                                //Callback
-                                clearTimeout(this.colorPickerDebounceTimer); 
-                                this.colorPickerDebounceTimer = setTimeout(() => {
-                                    this.triggerCallback('onPaintApplied', value);
-                                }, 1000);
-                                //Meta
-                                this.userEvents.push(`Paint Applied:${value}`)
+            const segmentedControl = document.createElement('DIV');
+            segmentedControl.className = 'segmentedControl mr8';
+            segmentedControlWrapper.appendChild(segmentedControl);
+
+                        var segment = document.createElement('DIV');
+                        segment.className = 'segment selected';
+                        segment.innerHTML = 'Standard';
+                        segment.dataset.segmentId = 0;
+                        segment.addEventListener('click', () => {
+                            this.paintSwatchMode = 0;
+                            this.createSwatches();
+                            //Update UI
+                            const segments = document.querySelectorAll('[data-segment-id]');
+                            segments.forEach(segment => {
+                                if (segment.dataset.segmentId == this.paintSwatchMode) {
+                                    segment.classList.add('selected');
+                            } else {
+                                segment.classList.remove('selected');
                             }
+                            });
                         });
-                        colorPickerContainer.appendChild(colorPickerInput);
+                        segmentedControl.appendChild(segment);
 
-            header = document.createElement('p');
-            header.className = 'title6 primaryText medium mb8 pl24 pr24';
-            header.innerHTML = 'Standard Colors';
-            paintModule.appendChild(header);
+                        segment = document.createElement('DIV');
+                        segment.className = 'segment';
+                        segment.innerHTML = 'Metallic';
+                        segment.dataset.segmentId = 1;
+                        segment.addEventListener('click', () => {
+                            this.paintSwatchMode = 1;
+                            this.createSwatches();
+                            //Update UI
+                            const segments = document.querySelectorAll('[data-segment-id]');
+                            segments.forEach(segment => {
+                                if (segment.dataset.segmentId == this.paintSwatchMode) {
+                                    segment.classList.add('selected');
+                            } else {
+                                segment.classList.remove('selected');
+                            }
+                            });
+                        });
+                    segmentedControl.appendChild(segment);
 
-            var scrollContainer = document.createElement('DIV');
-            scrollContainer.className = 'scroll';
-            paintModule.appendChild(scrollContainer);
+                    const colorPickerContainer = document.createElement('DIV');
+                    colorPickerContainer.className = 'colorPickerContainer';
+                    segmentedControlWrapper.appendChild(colorPickerContainer);
+    
+                            const colorPickerLabel = document.createElement('IMG');
+                            colorPickerLabel.className = 'mr8';
+                            colorPickerLabel.src = './visualizer/cdn/eyedropper-svgrepo-com.svg';
+                            colorPickerLabel.height = 20;
+                            colorPickerContainer.appendChild(colorPickerLabel);
+    
+                            const colorPickerInput = document.createElement('INPUT');
+                            colorPickerInput.setAttribute('type', 'color');
+                            colorPickerInput.id = 'favcolor';
+                            colorPickerInput.name = 'favcolor';
+                            colorPickerInput.value = '#ff0000';
+                            colorPickerInput.addEventListener('input', () => {
+                                const value = document.getElementById('favcolor').value;
+                                if (this.currentModel) {
+                                    this.cLog('Paint Applied', value);
+                                    //Config & Apply Paint
+                                    this.usingCustomColor = true;
+                      
+                                    for (var i = 0; i < this.currentModel.materials.length; i++) {
+                                        const material = this.currentModel.materials[i];
+                    
+                                        if (material.name === 'Paint') {
+                                            material.pbrMetallicRoughness.setBaseColorFactor(value);
+                                            break;
+                                        }
+                                    }
+                                    
+                                    //Update UI  
+                                    const swatches = document.querySelectorAll('[data-paint-id]');
+                                    swatches.forEach(swatch => {
+                                        swatch.classList.remove('selected');
+                                    });     
+                                    
+                                    const colorPickerContainer = document.querySelector('.colorPickerContainer input');
+                                    colorPickerContainer.classList.add('selected');
+                                    
+                                    //Callback
+                                    clearTimeout(this.colorPickerDebounceTimer); 
+                                    this.colorPickerDebounceTimer = setTimeout(() => {
+                                        this.triggerCallback('onPaintApplied', value);
+                                    }, 1000);
+                                    //Meta
+                                    this.userEvents.push(`Paint Applied:${value}`)
+                                }
+                            });
+                            colorPickerContainer.appendChild(colorPickerInput);
+
+
+            // header = document.createElement('p');
+            // header.className = 'title6 primaryText medium mb8';
+            // header.innerHTML = 'Standard Colors';
+            // paintModule.appendChild(header);
 
             var swatchContainer = document.createElement('div')
-            swatchContainer.id = 'flatSwatches';
-            swatchContainer.className = 'swatchContainer mb8 pl24 pr24';
-            scrollContainer.appendChild(swatchContainer);
+            swatchContainer.id = 'swatchContainer';
+            swatchContainer.className = 'swatchContainer';
+            paintModule.appendChild(swatchContainer);
 
-                this.createSwatches('flatSwatches', 0);
+            this.createSwatches();
 
 
-            header = document.createElement('p');
-            header.className = 'title6 primaryText medium mb8 pl24 pr24';
-            header.innerHTML = 'Metallic Colors';
-            paintModule.appendChild(header);
+            // header = document.createElement('p');
+            // header.className = 'title6 primaryText medium mb8';
+            // header.innerHTML = 'Metallic Colors';
+            // paintModule.appendChild(header);
 
-            scrollContainer = document.createElement('DIV');
-            scrollContainer.className = 'scroll';
-            paintModule.appendChild(scrollContainer);
+            // if(this.paintSwatchMode == 1) {
+            // scrollContainer = document.createElement('DIV');
+            // scrollContainer.className = 'scroll';
+            // paintModule.appendChild(scrollContainer);
 
-            swatchContainer = document.createElement('div');
-            swatchContainer.id = 'metallicSwatches';
-            swatchContainer.className = 'swatchContainer pl24 pr24';
-            scrollContainer.appendChild(swatchContainer);
+            // swatchContainer = document.createElement('div');
+            // swatchContainer.id = 'metallicSwatches';
+            // swatchContainer.className = 'swatchContainer';
+            // scrollContainer.appendChild(swatchContainer);
 
-                this.createSwatches('metallicSwatches', 1);
+            //     this.createSwatches('metallicSwatches', 1);
+            // }
 
             const lightModule = document.createElement('DIV');
             lightModule.className = 'module';
             bottomBarBottom.appendChild(lightModule);
 
             header = document.createElement('p');
-            header.className = 'title4 primaryText bold mb24 pl24 pr24';
+            header.className = 'title4 primaryText bold mb24';
             header.innerHTML = 'Scene';
             lightModule.appendChild(header);
 
-            header = document.createElement('p');
-            header.className = 'title6 primaryText mb4 pl24 pr24';
-            header.innerHTML = 'Environment';
-            lightModule.appendChild(header);
+            // header = document.createElement('p');
+            // header.className = 'title6 primaryText mb4';
+            // header.innerHTML = 'Environment';
+            // lightModule.appendChild(header);
 
-            scrollContainer = document.createElement('DIV');
-            scrollContainer.className = 'scroll';
-            lightModule.appendChild(scrollContainer);
-
+    
             swatchContainer = document.createElement('div')
-            swatchContainer.className = 'swatchContainer pl24 pr24 mb8';
-            scrollContainer.appendChild(swatchContainer);
+            swatchContainer.className = 'swatchContainer noScroll mb8';
+            lightModule.appendChild(swatchContainer);
 
             this.lightModels.forEach((light) => {
 
                 const swatch = document.createElement('IMG');
-                swatch.className = (light.id == this.selectedLightId) ? 'swatch selected' : 'swatch';
+                swatch.className = (light.id == this.selectedLightId) ? 'swatch large selected' : 'swatch large';
                 swatch.src = light.imgPath;
                 swatch.alt = light.name;
                 swatch.title = light.name;
@@ -565,12 +616,12 @@
                 swatchContainer.appendChild(swatch);
             });
         },
-        createSwatches(container, type) {
+        createSwatches() {
 
-            var container = document.getElementById(container);
+            var container = document.getElementById("swatchContainer");
             container.innerHTML = '';
 
-            const showingMetallic = (type == 0) ? false : true;
+            const showingMetallic = (this.paintSwatchMode == 0) ? false : true;
 
             this.paintColors.filter(color => (color.metallic == showingMetallic) && color.category == this.selectedColor).forEach((color, index) => {
                 const swatch = document.createElement('div');
@@ -611,7 +662,7 @@
                             }
                         });
 
-                        const colorPickerContainer = document.querySelector('.colorPickerContainer');
+                        const colorPickerContainer = document.querySelector('.colorPickerContainer input');
                         colorPickerContainer.classList.remove('selected');
 
                         //Callback
@@ -739,8 +790,8 @@ color: #fff;
     background: #FFFFFF;
     border-radius: 18px;
     box-shadow: 0px 1px 4px #bbb;
-    padding-top: 24px;
-    padding-bottom: 24px;
+    padding: 24px 24px 0px 24px;
+        position: relative;
 }
 
 .visualizer_wrapper.dark .bottom_bar .module 
@@ -777,22 +828,29 @@ color: #fff;
 
 .visualizer_wrapper .colorPickerContainer
 {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.visualizer_wrapper .colorPickerContainer input
+{
+    height: 26px;
     border: 2px solid #ddd;
     cursor: pointer;
 }
 
-.visualizer_wrapper.dark .colorPickerContainer
+.visualizer_wrapper.dark .colorPickerContainer input
 {
     border: 2px solid #000;
-    cursor: pointer;
 }
 
-.visualizer_wrapper .colorPickerContainer:hover
+.visualizer_wrapper .colorPickerContainer input:hover
 {
     border: 2px solid ${theme.brandColor};
 }
 
-.visualizer_wrapper .colorPickerContainer.selected
+.visualizer_wrapper .colorPickerContainer input.selected
 {
     border: 2px solid ${theme.brandColor};
 }
@@ -818,6 +876,16 @@ color: #fff;
 {
     display: flex;
     column-gap: 8px;
+    row-gap: 4px;
+    flex-wrap: wrap;
+    overflow: scroll;
+    height: 84px;
+    padding-bottom: 16px;
+}
+
+.visualizer_wrapper .swatchContainer.noScroll
+{
+    overflow: inherit;
 }
 
 .visualizer_wrapper .colorSelectorContainer 
@@ -826,13 +894,20 @@ color: #fff;
     column-gap: 4px;
 }
 
+.visualizer_wrapper .module .bottomGradient
+{
+width: 100%;
+height: 14px;
+background: linear-gradient(0deg,rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
+bottom: 0px;
+left: 24px;
+right: 24px;
+position: absolute;
+}
+
 .visualizer_wrapper #paintColors {
     display: flex;
     column-gap: 8px;
-}
-
-.visualizer_wrapper .scroll::-webkit-scrollbar {
-    display: none;
 }
 
 .visualizer_wrapper .color {
@@ -870,6 +945,11 @@ color: #fff;
     cursor: pointer;
 }
 
+.visualizer_wrapper .swatch.large
+{
+    width: 40px;
+    height: 40px;
+}
 
 .visualizer_wrapper.dark .swatch
 {
@@ -944,6 +1024,79 @@ color: #fff;
     100% {
     transform:  translateX(100%) scaleX(0.5);
     }
+}
+
+.visualizer_wrapper  .segmentedControlWrapper
+{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.visualizer_wrapper  .segmentedControlWrapper .segmentedControl
+{
+    border:1px solid black;
+    display: flex;
+    border-radius: 5px;
+}
+
+.visualizer_wrapper.dark .segmentedControlWrapper .segmentedControl
+{
+    border:1px solid #fff;
+}
+
+.visualizer_wrapper .segmentedControlWrapper .segmentedControl .segment
+{
+    padding: 4px 8px;
+    font-size: 0.675em;
+    cursor: pointer;
+}
+
+.visualizer_wrapper.dark .segmentedControlWrapper .segmentedControl .segment
+{
+    color: #fff;
+}
+
+
+.visualizer_wrapper .segmentedControlWrapper .segmentedControl .segment:first-child
+{
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.visualizer_wrapper .segmentedControlWrapper .segmentedControl .segment:last-child
+{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+
+.visualizer_wrapper .segmentedControlWrapper .segmentedControl .segment:hover
+{
+    background-color: #ccc;
+}
+
+.visualizer_wrapper.dark .segmentedControlWrapper .segmentedControl .segment:hover
+{
+    background-color: #ccc;
+}
+
+.visualizer_wrapper .segmentedControlWrapper .segmentedControl .segment.selected
+{
+    background-color: #000;
+    color: #fff;
+}
+
+.visualizer_wrapper.dark .segmentedControlWrapper .segmentedControl .segment.selected
+{
+    background-color: #fff;
+    color: #000;
+}
+
+.visualizer_wrapper .segmentedControlWrapper input 
+{
+ background: transparent;
 }
 
 .visualizer_wrapper .debugText {
