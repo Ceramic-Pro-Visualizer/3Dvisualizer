@@ -81,6 +81,7 @@
             { id: 'C8', name: 'Tesla Modal 3', path: './visualizer/cdn/tesla.glb?v=5', brand: 'Tesla', header: '2023'},
             { id: 'C9', name: 'Toyota 4 Runner', path: './visualizer/cdn/4runner.glb?v=4', brand: 'Toyota', header: '2024'},
             { id: 'C10', name: 'Ford Bronco', path: './visualizer/cdn/bronco.glb?v=5', brand: 'Ford', header: '2022'},
+            { id: 'C11', name: 'BMW X5', path: './visualizer/cdn/bmw.glb?v=5', brand: 'BMW', header: '2020'},
         ],
         lightModels: [//replace this with api in future, or even json file
             { id: 'L0', name: 'Studio', path: './visualizer/cdn/skylit_garage_1k.hdr', skybox: './visualizer/cdn/skylit_garage_1k_floor_l.hdr', imgPath: './visualizer/cdn/garage_thumbnail.jpg' },
