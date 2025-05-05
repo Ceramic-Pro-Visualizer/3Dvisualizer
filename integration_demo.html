@@ -42,7 +42,7 @@
 
 
     <!-- Import the visualizer js sdk -->
-    <script src="visualizer/src/visualizer_sdk_mv.js?build=1.0.0.2" type="text/javascript"></script>
+    <script src="visualizer/src/visualizer_sdk_mv.js?build=1.0.0.3" type="text/javascript"></script>
 
     <!-- Application JS example -->
     <script type="text/javascript">
@@ -90,6 +90,10 @@
 
         visualizer.on("onGetQuoteClicked", (meta) => {
             console.log("Host Page: Get Quote:", meta);
+        });
+
+        visualizer.on("onScreenshot", (meta) => {
+            console.log("Host Page: Screenshot:", meta);
         });
 
         function changeColorMode()
