@@ -83,7 +83,13 @@
             { id: 'C10', name: 'Ford Bronco', path: './visualizer/cdn/bronco.glb?v=1.0.0', brand: 'Ford', header: '2022'},
             { id: 'C11', name: 'BMW X5', path: './visualizer/cdn/bmw.glb?v=1.0.0', brand: 'BMW', header: '2020'},
             { id: 'C12', name: 'Porsche Taycan', path: './visualizer/cdn/taycan.glb?v=1.0.0', brand: 'Porsche', header: '2022'},
-            
+            { id: 'C13', name: 'Dodge Challenger', path: './visualizer/cdn/dodge_challenger.glb?v=1.0.0', brand: 'Dodge', header: '2022'},
+            { id: 'C14', name: 'Ford F350', path: './visualizer/cdn/f350.glb?v=1.0.0', brand: 'Ford', header: '2022'},
+            { id: 'C15', name: 'BMW M3 Competition', path: './visualizer/cdn/bmw_m3.glb?v=1.0.0', brand: 'BMW', header: '2022'},
+            { id: 'C16', name: 'Chevy Camero', path: './visualizer/cdn/camero.glb?v=1.0.0', brand: 'Chevy', header: '2022'},
+            { id: 'C17', name: 'GMC Sierra Competition', path: './visualizer/cdn/sierra.glb?v=1.0.0', brand: 'GMC', header: '2017'},
+            { id: 'C18', name: 'Toyota Supra', path: './visualizer/cdn/supra.glb?v=1.0.0', brand: 'Toyota', header: '2018'},
+            { id: 'C19', name: 'BMW X7 M60i', path: './visualizer/cdn/bmw_x7.glb?v=1.0.0', brand: 'BMW', header: '2020'},
         ],
         lightModels: [//replace this with api in future, or even json file
             { id: 'L0', name: 'Studio', path: './visualizer/cdn/skylit_garage_1k.hdr', skybox: './visualizer/cdn/skylit_garage_1k_floor_l.hdr', imgPath: './visualizer/cdn/garage_thumbnail.jpg' },
