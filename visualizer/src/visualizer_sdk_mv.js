@@ -514,7 +514,7 @@
                     segmentedControlWrapper.appendChild(colorPickerContainer);
     
                             const colorPickerLabel = document.createElement('IMG');
-                            colorPickerLabel.className = 'mr8';
+                            colorPickerLabel.className = 'eyedropper mr8';
                             colorPickerLabel.src = 'https://cdn.jsdelivr.net/gh/Ceramic-Pro-Visualizer/3Dvisualizer@main/visualizer/cdn/eyedropper-svgrepo-com.svg';
                             colorPickerLabel.height = 20;
                             colorPickerContainer.appendChild(colorPickerLabel);
@@ -875,6 +875,13 @@ color: #fff;
     height: 26px;
     border: 2px solid #ddd;
     cursor: pointer;
+}
+
+
+.visualizer_wrapper .eyedropper
+{
+    height: 20px;
+    width: 20px;
 }
 
 .visualizer_wrapper.dark .colorPickerContainer input
