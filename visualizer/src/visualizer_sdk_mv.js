@@ -93,9 +93,8 @@
         lightModels: [//replace this with api in future, or even json file
             { id: 'L0', name: 'Studio', path: 'skylit_garage_1k.hdr', skybox: 'skylit_garage_1k_floor_l.hdr', imgPath: 'garage_thumbnail.jpg' },
             { id: 'L1', name: 'Day', path: 'victoria_sunset_2k.hdr', skybox: 'victoria_sunset_2k.hdr', imgPath: 'day_thumbnail.jpg' },
-            { id: 'L2', name: 'Night', path: 'solitude_night_1k.hdr', skybox: 'solitude_night_1k.hdr', imgPath: 'night_thumbnail.jpg' },
-            { id: 'L3', name: 'Night', path: 'zwartkops_straight_sunset_1k.hdr', skybox: 'zwartkops_straight_sunset_1k.hdr', imgPath: 'test_thumbnail.jpg' },
-            { id: 'L4', name: 'Night', path: 'rooftop_night_1k.hdr', skybox: 'rooftop_night_1k.hdr', imgPath: 'test_thumbnail.jpg' },
+            { id: 'L3', name: 'Night', path: 'zwartkops_straight_sunset_2k.hdr', skybox: 'zwartkops_straight_sunset_1k.hdr', imgPath: 'track_thumbnail.jpg' },
+            { id: 'L4', name: 'Night', path: '058_hdrmaps_com_free_2K.hdr', skybox: '058_hdrmaps_com_free_2K.hdr', imgPath: 'night_thumbnail.jpg' },
         ],
         selectedCarModelId: 'C0',
         selectedPaintId: 'BahiaRed',
