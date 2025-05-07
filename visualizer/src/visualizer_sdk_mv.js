@@ -84,6 +84,11 @@
             { id: 'C17', name: 'GMC Sierra Competition', path: 'sierra.glb', brand: 'GMC', header: '2017'},
             { id: 'C18', name: 'Toyota Supra', path: 'supra.glb', brand: 'Toyota', header: '2018'},
             { id: 'C19', name: 'BMW X7 M60i', path: 'bmw_x7.glb', brand: 'BMW', header: '2020'},
+            { id: 'C20', name: 'Porsche Turbo (Classic)', path: '930.glb', brand: 'Porsche', header: '2020'},
+            { id: 'C21', name: 'Porsche Turbo', path: 'turbo.glb', brand: 'Porsche', header: '2020'},
+            { id: 'C22', name: 'Porsche GT3', path: 'gt3.glb', brand: 'Porsche', header: '2020'},
+            { id: 'C23', name: 'Porsche Macan', path: 'macan.glb', brand: 'Porsche', header: '2020'},
+
         ],
         lightModels: [//replace this with api in future, or even json file
             { id: 'L0', name: 'Studio', path: 'skylit_garage_1k.hdr', skybox: 'skylit_garage_1k_floor_l.hdr', imgPath: 'garage_thumbnail.jpg' },
