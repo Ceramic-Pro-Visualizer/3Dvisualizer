@@ -93,8 +93,8 @@
         lightModels: [//replace this with api in future, or even json file
             { id: 'L0', name: 'Studio', path: 'skylit_garage_1k.hdr', skybox: 'skylit_garage_1k_floor_l.hdr', imgPath: 'garage_thumbnail.jpg' },
             { id: 'L1', name: 'Day', path: 'victoria_sunset_2k.hdr', skybox: 'victoria_sunset_2k.hdr', imgPath: 'day_thumbnail.jpg' },
-            { id: 'L3', name: 'Night', path: 'zwartkops_straight_sunset_2k.hdr', skybox: 'zwartkops_straight_sunset_1k.hdr', imgPath: 'track_thumbnail.jpg' },
-            { id: 'L4', name: 'Night', path: '058_hdrmaps_com_free_2K.hdr', skybox: '058_hdrmaps_com_free_2K.hdr', imgPath: 'night_thumbnail.jpg' },
+            { id: 'L2', name: 'Night', path: 'zwartkops_straight_sunset_2k.hdr', skybox: 'zwartkops_straight_sunset_2k.hdr', imgPath: 'track_thumbnail.jpg' },
+            { id: 'L3', name: 'Night', path: '058_hdrmaps_com_free_2K.hdr', skybox: '058_hdrmaps_com_free_2K.hdr', imgPath: 'night_thumbnail.jpg' },
         ],
         selectedCarModelId: 'C0',
         selectedPaintId: 'BahiaRed',
@@ -169,7 +169,7 @@
             document.head.appendChild(imagePreload1);
 
             const imagePreload2 = document.createElement('link');
-            imagePreload2.href = `${cdn}/solitude_night_1k.hdr`;
+            imagePreload2.href = `${cdn}/zwartkops_straight_sunset_2k.hdr`;
             imagePreload2.rel = 'preload';
             imagePreload2.as = 'image';
             document.head.appendChild(imagePreload2);
@@ -341,10 +341,65 @@
                 dropdownContent.appendChild(dropdownItem);
             });
 
-            const versionNumber = document.createElement('P');
-            versionNumber.className = 'title6 lightText';
-            versionNumber.innerHTML = `v${this.version}`;
-            topBar.appendChild(versionNumber);
+            const right = document.createElement('DIV');
+            right.className = 'rightContent';
+            topBar.appendChild(right);
+
+                const versionNumber = document.createElement('P');
+                versionNumber.className = 'title6 lightText mr16';
+                versionNumber.innerHTML = `v${this.version}`;
+                right.appendChild(versionNumber);
+
+                var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svg.setAttribute("fill", "#000000");
+                svg.setAttribute("version", "1.1");
+                svg.setAttribute("width", "16px");
+                svg.setAttribute("height", "16px");
+                svg.setAttribute("viewBox", "0 0 45.999 45.999");
+                svg.setAttribute("xml:space", "preserve");
+                const g1 = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g1.setAttribute("id", "SVGRepo_bgCarrier");
+                g1.setAttribute("stroke-width", "0");
+                svg.appendChild(g1);
+                const g2 = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g2.setAttribute("id", "SVGRepo_tracerCarrier");
+                g2.setAttribute("stroke-linecap", "round");
+                g2.setAttribute("stroke-linejoin", "round");
+                svg.appendChild(g2);
+                const g3 = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g3.setAttribute("id", "SVGRepo_iconCarrier");
+                const g4 = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                const g5 = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                var svg_path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                svg_path.setAttribute("d", "M39.264,6.736c-8.982-8.981-23.545-8.982-32.528,0c-8.982,8.982-8.981,23.545,0,32.528c8.982,8.98,23.545,8.981,32.528,0 C48.245,30.281,48.244,15.719,39.264,6.736z M25.999,33c0,1.657-1.343,3-3,3s-3-1.343-3-3V21c0-1.657,1.343-3,3-3s3,1.343,3,3V33z M22.946,15.872c-1.728,0-2.88-1.224-2.844-2.735c-0.036-1.584,1.116-2.771,2.879-2.771c1.764,0,2.88,1.188,2.917,2.771 C25.897,14.648,24.746,15.872,22.946,15.872z");
+                g5.appendChild(svg_path);
+                g4.appendChild(g5);
+                g3.appendChild(g4);
+                svg.appendChild(g3);
+                svg.addEventListener('click', () => {
+                    const creditsModal = document.createElement('div');
+                    creditsModal.id = 'creditsModal';
+                    creditsModal.className = 'creditsModal';
+                
+                    const creditsModalInner = document.createElement('div');
+                    creditsModalInner.className = 'creditsModalInner';
+                    creditsModalInner.innerHTML = `
+                        <p><strong>Model Viewer v${this.version}</strong><br><br>
+                        Credits:<br>Car 1<br>Car 2<br>Car 3<br><br>
+                        <em>Tap anywhere outside to dismiss</em></p>
+                    `;
+                    creditsModal.appendChild(creditsModalInner);
+                    wrapper.appendChild(creditsModal);
+                
+                    // Close only if outside inner content
+                    creditsModal.addEventListener('click', (e) => {
+                        if (e.target === creditsModal) {
+                            creditsModal.remove();
+                        }
+                    });
+                });
+                right.appendChild(svg);
+                
 
             const bottomBar = document.createElement('div');
             bottomBar.className = 'bottom_bar';
@@ -450,12 +505,11 @@
                 const SVG_NS = "http://www.w3.org/2000/svg";
 
                 // Create the main <svg> element
-                const svg = document.createElementNS(SVG_NS, "svg");
-                svg.setAttribute("id", "signatureIcon");
+                svg = document.createElementNS(SVG_NS, "svg");
                 svg.setAttribute("width", "24px");
                 svg.setAttribute("height", "24px");
                 svg.setAttribute("viewBox", "0 0 487 487");
-                const svg_path = document.createElementNS(SVG_NS, "path");
+                svg_path = document.createElementNS(SVG_NS, "path");
                 svg_path.setAttribute("d", "M308.1,277.95c0,35.7-28.9,64.6-64.6,64.6s-64.6-28.9-64.6-64.6s28.9-64.6,64.6-64.6S308.1,242.25,308.1,277.95z M440.3,116.05c25.8,0,46.7,20.9,46.7,46.7v122.4v103.8c0,27.5-22.3,49.8-49.8,49.8H49.8c-27.5,0-49.8-22.3-49.8-49.8v-103.9 v-122.3c0-25.8,20.9-46.7,46.7-46.7h93.4l4.4-18.6c6.7-28.8,32.4-49.2,62-49.2h74.1c29.6,0,55.3,20.4,62,49.2l4.3,18.6H440.3z M97.4,183.45c0-12.9-10.5-23.4-23.4-23.4c-13,0-23.5,10.5-23.5,23.4s10.5,23.4,23.4,23.4C86.9,206.95,97.4,196.45,97.4,183.45z M358.7,277.95c0-63.6-51.6-115.2-115.2-115.2s-115.2,51.6-115.2,115.2s51.6,115.2,115.2,115.2S358.7,341.55,358.7,277.95z");
                 svg_path.setAttribute("fill", "#ffffff");
         
@@ -594,10 +648,9 @@
                     modelViewer.environmentImage = `${cdn}/${light.path}`;
                     modelViewer.skyboxImage = `${cdn}/${light.skybox}`;
 
-                    if(light.id == 'L2')
+                    if(light.id == 'L3')
                     {
-                        this.animator.setExposure(0.5, 1000);
-
+                        this.animator.setExposure(0.9, 1000);
                     } 
                     else 
                     {
@@ -708,6 +761,7 @@
     font-size: 16px;
     letter-spacing: 0.5px;
     border: 1px solid #ccc;
+    position: relative;
 }
 
 .visualizer_wrapper .primaryText
@@ -775,6 +829,19 @@ color: #fff;
     padding: 16px 40px;
     align-items: center;
     justify-content: space-between;
+}
+
+.visualizer_wrapper .top_bar  .rightContent {
+    display: flex;
+    align-items: center;
+}
+
+.visualizer_wrapper .top_bar  .rightContent svg {
+    cursor: pointer;
+}
+
+.visualizer_wrapper.dark .top_bar .rightContent svg {
+    fill: #fff;
 }
 
 .visualizer_wrapper .side_bar {
@@ -878,6 +945,8 @@ color: #fff;
   align-items: center;
   height: 44px;
 }
+
+v
 
 .visualizer_wrapper .scroll {
     overflow: scroll;
@@ -1195,6 +1264,54 @@ background: #303030;
     background-color: #${theme.buttonHover};
 }
 
+.visualizer_wrapper .creditsModal {
+    position: absolute;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease-out;
+}
+
+.visualizer_wrapper .creditsModal .creditsModalInner {
+    max-width: 90%;
+    width: 400px;
+    padding: 24px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    font-family: sans-serif;
+    animation: slideUp 0.3s ease-out;
+}
+
+.visualizer_wrapper .creditsModal .creditsModalInner p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+
 @media only screen and (max-width: 600px) {
 
 .visualizer_wrapper .threeJSContainer{
@@ -1241,7 +1358,19 @@ row-gap: 12px;
 .visualizer_wrapper button. {
     padding: 6px 12px;
 }
-    
+
+  .visualizer_wrapper .creditsModal .creditsModalInner {
+    width: 90%;
+    padding: 20px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
+
+  .visualizer_wrapper .creditsModal .creditsModalInner p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
 }
         `;
             document.head.appendChild(style);
