@@ -811,13 +811,13 @@
                     
                     const colorName = document.createElement('P');
                     colorName.className = 'title5 bold mb4';
-                    colorName.innerText = `Name: ${color.name}`;
+                    colorName.innerText = `Paint Name: ${color.name}`;
                     statContainer.appendChild(colorName);
 
                     if(color.code) {
                         const colorCode = document.createElement('P');
                         colorCode.className = 'title5 bold mb4';
-                        colorCode.innerText = `Code: ${color.code}`;
+                        colorCode.innerText = `Paint Code: ${color.code}`;
                         statContainer.appendChild(colorCode);
                     }
                 }
