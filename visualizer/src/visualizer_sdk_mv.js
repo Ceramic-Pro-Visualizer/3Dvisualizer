@@ -100,7 +100,7 @@
         selectedPaintId: 'BahiaRed',
         selectedLightId: 'L0',
         selectedColor: 0,
-        usingCustomColor: false,
+        customColor: null,
         colorPickerDebounceTimer: null,
         paintSwatchMode: 0,
         //--------------------------- Init / Main Entry Point ---------------------------//
@@ -253,6 +253,10 @@
 
   
             await this.createUI(wrapper, modelViewer, cdn);
+
+            //
+            this.updateStatContainer();
+
             this.cLog('Ready!');
         },
         //--------------------------- UI Overlay/Chrome ---------------------------//
@@ -384,10 +388,47 @@
                     const creditsModalInner = document.createElement('div');
                     creditsModalInner.className = 'creditsModalInner';
                     creditsModalInner.innerHTML = `
-                        <p><strong>Model Viewer v${this.version}</strong><br><br>
-                        Credits:<br>Car 1<br>Car 2<br>Car 3<br><br>
-                        <em>Tap anywhere outside to dismiss</em></p>
-                    `;
+                    <p><strong>Model Viewer v${this.version}</strong><br><br>
+                    <strong>Credits:</strong><br><br>
+                
+                    <strong>BMW</strong><br>
+                    2020 BMW X5 M Competition – <a href="https://skfb.ly/o6szM" target="_blank">David_Holiday</a><br>
+                    2021 BMW M3 Competition (G80) – <a href="https://skfb.ly/ptBsV" target="_blank">DisneyCars</a><br>
+                    BMW X7 M60i – Free standard license<br><br>
+                
+                    <strong>Chevrolet</strong><br>
+                    2019 Silverado Trail Boss Z71 – <a href="https://skfb.ly/p88ox" target="_blank">Ddiaz Design</a><br>
+                    2023 Corvette – <a href="https://skfb.ly/prITD" target="_blank">Jeremy Montero</a><br>
+                    2017 Camaro 1LS – <a href="https://skfb.ly/psnGP" target="_blank">Ddiaz Design</a><br><br>
+                
+                    <strong>Dodge</strong><br>
+                    Challenger – <a href="https://skfb.ly/CntL" target="_blank">Gesy</a><br><br>
+                
+                    <strong>Ford</strong><br>
+                    F-150 Raptor (F-150II) – <a href="https://skfb.ly/ptMKs" target="_blank">Mona x Supercars</a><br>
+                    Mustang Shelby GT500 – <a href="https://skfb.ly/ozAnK" target="_blank">Jiaxing</a><br>
+                    2021 Bronco Wildtrak – <a href="https://skfb.ly/o667P" target="_blank">David_Holiday</a><br>
+                    F-350 – <a href="https://skfb.ly/psIqV" target="_blank">L95XP</a><br><br>
+                
+                    <strong>GMC</strong><br>
+                    Sierra Crew Cab – Free standard license<br><br>
+                
+                    <strong>Porsche</strong><br>
+                    Cayenne – <a href="https://skfb.ly/ps6Yu" target="_blank">Mona x Supercars</a><br>
+                    Taycan – <a href="https://skfb.ly/oCMyr" target="_blank">Mikhail Hamanovich</a><br><br>
+                
+                    <strong>Ram</strong><br>
+                    2021 Ram 1500 TRX – <a href="https://skfb.ly/prWwx" target="_blank">SRUSH651 2th☑</a><br><br>
+                
+                    <strong>Tesla</strong><br>
+                    Model 3 – <a href="https://skfb.ly/oQ8RQ" target="_blank">dannzjs</a><br><br>
+                
+                    <strong>Toyota</strong><br>
+                    4Runner – <a href="https://skfb.ly/prLrM" target="_blank">Bobby the TCF and FSP and TCS and SML fan</a><br><br>
+                
+                    <em>Tap anywhere outside to dismiss</em>
+                    </p>
+                `;                
                     creditsModal.appendChild(creditsModalInner);
                     wrapper.appendChild(creditsModal);
                 
@@ -583,7 +624,7 @@
                                 if (this.currentModel) {
                                     this.cLog('Paint Applied', value);
                                     //Config & Apply Paint
-                                    this.usingCustomColor = true;
+                                    this.usingCustomColor = value;
                       
                                     for (var i = 0; i < this.currentModel.materials.length; i++) {
                                         const material = this.currentModel.materials[i];
@@ -603,6 +644,8 @@
                                     const colorPickerContainer = document.querySelector('.colorPickerContainer input');
                                     colorPickerContainer.classList.add('selected');
                                     
+                                    this.updateStatContainer();
+
                                     //Callback
                                     clearTimeout(this.colorPickerDebounceTimer); 
                                     this.colorPickerDebounceTimer = setTimeout(() => {
@@ -674,6 +717,19 @@
                 });
                 swatchContainer.appendChild(swatch);
             });
+
+            const statModule = document.createElement('DIV');
+            statModule.className = 'module';
+            bottomBarBottom.appendChild(statModule);
+
+            header = document.createElement('p');
+            header.className = 'title4 primaryText bold mb24';
+            header.innerHTML = 'Selected Options';
+            statModule.appendChild(header);
+
+            const statContainer = document.createElement('DIV');
+            statContainer.id = 'statContainer';
+            statModule.appendChild(statContainer);
         },
         createSwatches() {
 
@@ -709,7 +765,7 @@
                             }
                             }
                         this.selectedPaintId = color.ref;
-                        this.usingCustomColor = false;
+                        this.usingCustomColor = null;
                         
                         //Update UI
                         const swatches = document.querySelectorAll('[data-paint-id]');
@@ -724,6 +780,8 @@
                         const colorPickerContainer = document.querySelector('.colorPickerContainer input');
                         colorPickerContainer.classList.remove('selected');
 
+                        this.updateStatContainer();
+
                         //Callback
                         this.triggerCallback('onPaintApplied', color);
                         //Meta
@@ -733,6 +791,37 @@
 
                 container.appendChild(swatch);
             });
+        },
+        updateStatContainer()
+        {
+            const statContainer = document.getElementById('statContainer');
+            if(statContainer) {
+                statContainer.innerHTML = '';
+                
+                if(this.usingCustomColor) 
+                {
+                    const colorName = document.createElement('P');
+                    colorName.className = 'title5 bold mb4';
+                    colorName.innerText = `Value: ${this.usingCustomColor}`;
+                    statContainer.appendChild(colorName);
+                } 
+                else 
+                {
+                    const color = this.getElementById(this.paintColors, this.selectedPaintId, 'ref');
+                    
+                    const colorName = document.createElement('P');
+                    colorName.className = 'title5 bold mb4';
+                    colorName.innerText = `Name: ${color.name}`;
+                    statContainer.appendChild(colorName);
+
+                    if(color.code) {
+                        const colorCode = document.createElement('P');
+                        colorCode.className = 'title5 bold mb4';
+                        colorCode.innerText = `Code: ${color.code}`;
+                        statContainer.appendChild(colorCode);
+                    }
+                }
+            }
         },
         //--------------------------- Utility ---------------------------//
         getElementById(array, id, param) {
@@ -1279,6 +1368,7 @@ background: #303030;
 .visualizer_wrapper .creditsModal .creditsModalInner {
     max-width: 90%;
     width: 400px;
+    height: 400px;
     padding: 24px;
     background: white;
     border-radius: 12px;
@@ -1286,6 +1376,7 @@ background: #303030;
     text-align: center;
     font-family: sans-serif;
     animation: slideUp 0.3s ease-out;
+    overflow-y: scroll;
 }
 
 .visualizer_wrapper .creditsModal .creditsModalInner p {
