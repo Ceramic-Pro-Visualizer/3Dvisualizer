@@ -388,7 +388,7 @@
                     const creditsModalInner = document.createElement('div');
                     creditsModalInner.className = 'creditsModalInner';
                     creditsModalInner.innerHTML = `
-                    <p><strong>Model Viewer v${this.version}</strong><br><br>
+                    <p><strong>Car Visualizer v${this.version}</strong><br><br>
                     <strong>Credits:</strong><br><br>
                 
                     <strong>BMW</strong><br>
