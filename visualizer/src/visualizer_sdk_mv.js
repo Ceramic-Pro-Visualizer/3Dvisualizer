@@ -719,7 +719,7 @@
             });
 
             const statModule = document.createElement('DIV');
-            statModule.className = 'module';
+            statModule.className = 'module no-scroll';
             bottomBarBottom.appendChild(statModule);
 
             header = document.createElement('p');
@@ -953,7 +953,13 @@ color: #fff;
     border-radius: 18px;
     box-shadow: 0px 1px 4px #bbb;
     padding: 24px 24px 0px 24px;
-        position: relative;
+    position: relative;
+}
+
+ 
+.visualizer_wrapper .bottom_bar .module.no-scroll
+{
+    padding: 24px 24px 24px 24px;
 }
 
 .visualizer_wrapper.dark .bottom_bar .module 
